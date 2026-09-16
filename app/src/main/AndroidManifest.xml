@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.leonardofox346.io">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/app_icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LabNardo"
+        android:usesCleartextTraffic="true">
+        
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.LabNardo.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".PrivacyConsentActivity"
+            android:theme="@style/Theme.LabNardo.NoActionBar" />
+
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:label="隐私协议"
+            android:parentActivityName=".SettingsActivity" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="设置"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".TabManagerActivity"
+            android:label="标签页集合"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".AboutKimiActivity"
+            android:label="关于 KIMI Code"
+            android:parentActivityName=".SettingsActivity" />
+
+    </application>
+
+</manifest>

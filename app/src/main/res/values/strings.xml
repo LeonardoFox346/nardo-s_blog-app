@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lab.Nardo</string>
+    <string name="settings_title">设置</string>
+    <string name="tab_manager_title">标签页集合</string>
+    <string name="about_kimi_title">关于 KIMI Code</string>
+    <string name="privacy_policy_title">隐私协议</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="permissions">权限声明</string>
+    <string name="privacy">隐私协议</string>
+    <string name="about_site">关于此网站</string>
+    <string name="about_app">关于APP作者</string>
+    <string name="active_tabs_count">活跃标签页数量</string>
+    <string name="about_kimi">关于 KIMI Code</string>
+    <string name="welcome">欢迎使用</string>
+    <string name="enter_app">进入应用</string>
+    <string name="read_privacy">阅读隐私协议</string>
+    <string name="agree_privacy">我已阅读并同意隐私协议</string>
+</resources>

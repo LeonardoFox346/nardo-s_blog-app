@@ -1,0 +1,38 @@
+# ---------- 构建产物 ----------
+build/
+app/build/
+app/release/
+app/debug/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+output-metadata.json
+baselineProfiles/
+
+# ---------- Gradle ----------
+.gradle/
+gradle-app.setting
+.gradletasknamecache
+local.properties
+
+# ---------- IDE 本机配置（保留共享的代码风格/编译设置） ----------
+.idea/*
+!.idea/.gitignore
+!.idea/codeStyles/
+!.idea/compiler.xml
+!.idea/gradle.xml
+!.idea/misc.xml
+!.idea/AndroidProjectSystem.xml
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ---------- 系统 / 编辑器 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.hprof

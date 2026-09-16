@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorPrimary"
+    android:padding="32dp"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/app_icon"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="欢迎使用 Lab.Nardo"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvPrivacyHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="在使用本应用前，请您阅读并了解我们的隐私协议。"
+        android:textColor="#B0FFFFFF"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/btnReadPrivacy"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="阅读隐私协议"
+        android:textColor="?attr/colorPrimary"
+        android:backgroundTint="@android:color/white"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <CheckBox
+            android:id="@+id/cbAgree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="我已阅读并同意隐私协议"
+            android:textColor="@android:color/white"
+            android:buttonTint="@android:color/white" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEnter"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="进入应用"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#4CAF50"
+        android:textSize="16sp" />
+
+</LinearLayout>

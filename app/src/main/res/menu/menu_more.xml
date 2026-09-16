@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_home"
+        android:title="返回主页" />
+
+    <item
+        android:id="@+id/menu_music"
+        android:title="来点音乐？" />
+
+    <item
+        android:id="@+id/menu_tabs"
+        android:title="标签页集合" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="设置" />
+
+</menu>
