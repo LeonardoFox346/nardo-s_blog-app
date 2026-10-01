@@ -166,6 +166,7 @@
             <include android:id="@+id/sec12" layout="@layout/item_privacy_section" />
             <include android:id="@+id/sec13" layout="@layout/item_privacy_section" />
             <include android:id="@+id/sec14" layout="@layout/item_privacy_section" />
+            <include android:id="@+id/sec15" layout="@layout/item_privacy_section" />
 
         </LinearLayout>
 

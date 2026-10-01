@@ -64,6 +64,7 @@
     <string name="privacy_consent_b1"><b>本应用不收集您的个人信息。</b>没有账号体系，不接入第三方统计，不投放广告，不写入任何 Cookie，也不索取位置、通讯录与存储等权限。</string>
     <string name="privacy_consent_b2"><b>网页内容由第三方网站提供。</b>除纳多狐狐实验室网站外，页面内容不受本应用控制；您在网页中的输入与浏览行为由对应网站处理，请留意其隐私政策。</string>
     <string name="privacy_consent_b3"><b>本应用仅申请两项权限。</b>INTERNET 与 ACCESS_NETWORK_STATE，分别用于访问网站与判断网络连接状态；文件下载功能已禁用。</string>
+    <string name="privacy_consent_b4"><b>本应用以 Apache-2.0 许可开源。</b>源代码公开可查，您可以自行审阅上面那句「不收集个人信息」是否属实。</string>
     <string name="privacy_consent_more">以上为摘要，完整条款见《隐私政策与使用条款》</string>
     <string name="privacy_consent_decline">不同意</string>
     <string name="privacy_consent_agree">同意并继续</string>
@@ -87,6 +88,9 @@
     <string name="about_app_version">版本 %1$s</string>
     <string name="about_app_intro">一款为纳多狐狐实验室（nardofox.cn）读者准备的浏览客户端：多标签 WebView、活跃标签自动休眠，界面按 Material 3 规范重做。</string>
     <string name="about_app_footer">© 2026 纳多狐狐实验室</string>
+    <string name="open_source_title">开源许可</string>
+    <string name="open_source_summary">Apache License 2.0</string>
+    <string name="open_source_body">本应用的源代码以 <b>Apache License 2.0</b> 许可开放。您可以自由使用、修改与再分发，但须保留版权声明与许可声明。\n\n该许可<b>不授予商标权</b>，也不及于下列内容：<b>纳多狐狐</b>形象与「Lab.Nardo」名称；<b>DeepSeek</b> 与 <b>Kimi</b> 的品牌标识（各归其权利人所有）；以及纳多狐狐实验室网站的图文内容（适用网站自身的版权声明）。\n\n完整许可条款见源码仓库中的 LICENSE 文件。</string>
 
     <!-- ===== AI 辅助编程（由「关于本应用」页的入口卡进入，同页展示 DeepSeek 与 Kimi 两段） ===== -->
     <string name="ai_assist_title">AI 辅助编程</string>
@@ -197,4 +201,7 @@
 
     <string name="privacy_s14_title">第十四条　生效、修改与适用</string>
     <string name="privacy_s14_body">本条款自 2026 年 10 月 1 日起生效，适用于 Lab.Nardo 应用及其所加载的纳多狐狐实验室网站内容。本条款可能因功能调整而修改，修改后将在应用内与网站同步发布。\n\n<b>版本升级提示</b>：自 3.0.0 起本应用改用新的签名密钥，已安装旧版本的用户在升级前需先卸载旧版，本地数据（偏好与缓存）会随之丢失。</string>
+
+    <string name="privacy_s15_title">第十五条　开源许可</string>
+    <string name="privacy_s15_body">本应用的源代码以 <b>Apache License 2.0</b> 许可开放：您可以在源码仓库中取得、审阅、修改并再分发，但须保留版权声明与许可声明。开放源代码也是本条款「不收集个人信息」一语可供验证的依据。\n\n该许可仅及于<b>代码本身</b>，不及于下列内容：\n\n• <b>品牌与形象</b> —— 纳多狐狐形象、「Lab.Nardo」名称、应用图标与启动页图像；\n• <b>第三方标识</b> —— DeepSeek 与 Kimi 的品牌标识，各归其权利人所有，本应用仅作说明性使用；\n• <b>网站内容</b> —— 纳多狐狐实验室网站的图文内容，其授权规则见第十条与第十二条。\n\n本许可<b>不授予商标权</b>。若您基于本应用源代码发布衍生版本，请更换名称与应用图标，勿使他人误认为该版本由纳多狐狐实验室发布。</string>
 </resources>

@@ -1,0 +1,46 @@
+Lab.Nardo
+Copyright 2026 LeonardoFox
+
+This product includes software developed by LeonardoFox
+(https://github.com/LeonardoFox346).
+
+────────────────────────────────────────────────────────────────────────
+许可范围（务必先读这一节）
+────────────────────────────────────────────────────────────────────────
+
+本仓库以 Apache License 2.0 授权的对象，**仅及于源代码**。
+
+下列内容**不在**授权范围内，不得随代码一并复制、再分发或用于衍生作品：
+
+1. 品牌与形象
+   ·「纳多狐狐」形象 —— res/drawable-nodpi/app_icon.png、header_image.png
+   ·「Lab.Nardo」「纳多狐狐实验室」名称
+   上述形象为委托创作作品，权利归 LeonardoFox 所有；未经书面许可不得使用。
+
+2. 第三方品牌标识 —— 各归其权利人所有，本仓库仅作说明性使用
+   · DeepSeek 标识 —— res/drawable/ic_deepseek.xml
+   · Kimi 标识    —— res/drawable-nodpi/ic_kimi.webp
+   本许可不授予任何第三方商标、商号或服务标记的使用权。
+
+3. 网站内容
+   · https://nardofox.cn 上的全部图文内容
+   其授权规则见该网站《隐私政策与使用条款》，与本许可无关。
+
+依 Apache License 2.0 第 6 条（Trademarks），本许可不授予商标权。
+若您基于本仓库发布衍生版本，请更换应用名称与应用图标，
+勿使他人误认为该版本由纳多狐狐实验室发布。
+
+────────────────────────────────────────────────────────────────────────
+第三方组件
+────────────────────────────────────────────────────────────────────────
+
+本应用使用了下列以 Apache License 2.0 授权的组件：
+
+  · AndroidX AppCompat                 Copyright (C) The Android Open Source Project
+  · AndroidX ConstraintLayout          Copyright (C) The Android Open Source Project
+  · AndroidX RecyclerView              Copyright (C) The Android Open Source Project
+  · AndroidX Activity                  Copyright (C) The Android Open Source Project
+  · AndroidX Core                      Copyright (C) The Android Open Source Project
+  · Material Components for Android    Copyright (C) Google LLC
+
+各组件完整许可文本见其官方仓库与发行包内附的 LICENSE 文件。
