@@ -1,71 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Lab.Nardo 首次启动的「隐私政策与使用条款」确认弹窗
+  ══════════════════════════════════════════════════════════════════════════
+  写法对齐博客站的前置弹窗（D:\WEB\blog\themes\anzhiyu\layout\includes\agreement-modal.pug）：
+    · 是**弹窗**（遮罩 + 居中卡片），不是一整页；
+    · 正文是**精简版**：三条摘要，每条 = 图标 + 粗体结论 + 说明；
+    · 末尾一行指向完整条款；
+    · 底部两个**平级的真选项**按钮（不同意 / 同意并继续）。
+  ⛔ 不设勾选框、不做默认勾选、不写成「同意我们收集您的数据」——
+     本应用不收集任何数据，这个弹窗的性质是「使用条款的知悉确认」。
+  ⛔ 返回键等同「不同意」（见 PrivacyConsentActivity），不能绕过选择直接进应用。
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/consentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorPrimary"
-    android:padding="32dp"
-    android:gravity="center">
+    android:background="@drawable/bg_scrim"
+    android:fillViewport="true">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/app_icon"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="欢迎使用 Lab.Nardo"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="match_parent"
+        android:paddingStart="20dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp">
 
-    <TextView
-        android:id="@+id/tvPrivacyHint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="在使用本应用前，请您阅读并了解我们的隐私协议。"
-        android:textColor="#B0FFFFFF"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:layout_marginBottom="24dp" />
-
-    <Button
-        android:id="@+id/btnReadPrivacy"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="阅读隐私协议"
-        android:textColor="?attr/colorPrimary"
-        android:backgroundTint="@android:color/white"
-        android:layout_marginBottom="16dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
-
-        <CheckBox
-            android:id="@+id/cbAgree"
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="我已阅读并同意隐私协议"
-            android:textColor="@android:color/white"
-            android:buttonTint="@android:color/white" />
+            android:layout_gravity="center"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="6dp">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-    <Button
-        android:id="@+id/btnEnter"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:text="进入应用"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#4CAF50"
-        android:textSize="16sp" />
+                <!-- 标题：图标 + 文档全称 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-</LinearLayout>
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_privacy"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="@string/privacy_consent_title"
+                        android:textAppearance="?attr/textAppearanceTitleLarge"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="@string/privacy_consent_lead"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- 摘要 ① -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="2dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_privacy"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.35"
+                        android:text="@string/privacy_consent_b1"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <!-- 摘要 ② -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="2dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_link"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.35"
+                        android:text="@string/privacy_consent_b2"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <!-- 摘要 ③ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="2dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_security"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.35"
+                        android:text="@string/privacy_consent_b3"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                </LinearLayout>
+
+                <!-- 指向完整条款（点整行打开正文页） -->
+                <TextView
+                    android:id="@+id/tvReadFull"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:lineSpacingMultiplier="1.3"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="@string/privacy_consent_more"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorPrimary" />
+
+                <!-- 两个平级的真选项 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDecline"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="@string/privacy_consent_decline"
+                        android:textSize="15sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAgree"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/privacy_consent_agree"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+</androidx.core.widget.NestedScrollView>

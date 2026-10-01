@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 自适应图标（adaptive icon）
+  · minSdk 29，故只需 mipmap-anydpi-v26 一套，无需各 dpi 位图
+  · 前景为全幅插画 app_icon.png，由系统掩码裁切；Android 13+ 支持主题图标取色时同样可用
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@drawable/app_icon" />
+</adaptive-icon>

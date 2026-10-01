@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12（API 31）及以上：系统启动画面（SplashScreen API）配色。
+  本应用自带品牌启动页 SplashActivity，如果不声明这些属性，Android 12+ 会先弹一个
+  系统启动画面（默认取 windowBackground 的浅色 + 应用图标），与本应用的紫色启动页
+  明显断层，看起来像闪了两下。这里把系统启动画面的底色对齐到同一个主色，
+  图标也用同一张 app_icon，系统画面结束后无缝进入品牌启动动画。
+
+  注意：styles 资源在带限定符的目录里是「整份替换」而非「逐项合并」，
+  所以这里必须完整重写 Theme.LabNardo.Splash，并显式声明 parent。
+-->
+<resources>
+
+    <style name="Theme.LabNardo.Splash" parent="Theme.LabNardo">
+        <item name="android:windowBackground">@color/md_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- 系统启动画面（API 31+ 属性） -->
+        <item name="android:windowSplashScreenBackground">@color/md_primary</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/app_icon</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/md_primary</item>
+        <item name="android:windowSplashScreenAnimationDuration">200</item>
+    </style>
+
+</resources>

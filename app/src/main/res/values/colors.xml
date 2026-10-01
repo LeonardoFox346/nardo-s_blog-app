@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 传统颜色资源
+  · 2026-10 MD3 重构后，原 MD2 的 purple_*/teal_* 已全部不再被引用（已实测 grep 零命中），故移除
+  · MD3 色彩角色统一在 colors_md3.xml / values-night/colors_md3.xml 定义
+-->
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- 自适应图标（mipmap-anydpi-v26）的底色；前景为全幅插画，此色仅在掩码边缘兜底 -->
+    <color name="ic_launcher_background">#FFFFFBFE</color>
 </resources>

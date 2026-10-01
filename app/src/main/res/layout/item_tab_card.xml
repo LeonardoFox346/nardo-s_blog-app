@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  标签页卡片（MD3）
+  · MaterialCardView 取代旧的 androidx.cardview.CardView
+  · 选中态由 TabCardAdapter 通过 strokeColor / strokeWidth 表达
+  · 所有颜色取自主题属性，深色模式下自动适配
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardTab"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_margin="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,39 +26,42 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp">
+            android:layout_height="112dp"
+            android:background="?attr/colorSurfaceContainerHighest">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivPreview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:background="#E0E0E0" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/menu_tabs"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_link" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_gravity="top|end"
-                android:padding="4dp">
+                android:orientation="horizontal"
+                android:padding="6dp">
 
                 <ImageButton
                     android:id="@+id/btnSleep"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_tab_sleep"
                     android:src="@drawable/ic_sleep"
-                    android:tint="@android:color/white"
-                    android:contentDescription="休眠/唤醒" />
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
                 <ImageButton
                     android:id="@+id/btnClose"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_tab_close"
                     android:src="@drawable/ic_close"
-                    android:tint="#F44336"
-                    android:contentDescription="关闭" />
+                    app:tint="?attr/colorError" />
 
             </LinearLayout>
 
@@ -56,34 +71,35 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="标签页"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:maxLines="1"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
-            android:paddingHorizontal="12dp"
-            android:paddingTop="8dp" />
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/tvUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="https://"
-            android:textSize="11sp"
-            android:textColor="#9E9E9E"
-            android:maxLines="1"
             android:ellipsize="end"
-            android:paddingHorizontal="12dp" />
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="活跃"
-            android:textSize="11sp"
-            android:paddingHorizontal="12dp"
-            android:paddingBottom="8dp" />
+            android:paddingStart="14dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp"
+            android:textAppearance="?attr/textAppearanceLabelMedium" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

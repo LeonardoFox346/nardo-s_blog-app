@@ -1,6 +1,6 @@
 # 博客专属APP备份（基于安卓WebView）
 
-个人博客「[纳多狐狐实验室](https://leonardofox346.github.io)」的专属 Android 客户端 —— **一个用 WebView 把博客装进手机的小应用**。
+个人博客「[纳多狐狐实验室](https://nardofox.cn)」的专属 Android 客户端 —— **一个用 WebView 把博客装进手机的小应用**。
 
 本仓库是这份 APP 的**源码备份**，防止只存本机导致丢失。
 可安装的签名安装包见右侧 **[Releases](../../releases)**（不进 git 仓库）。
@@ -11,10 +11,10 @@
 | 包名 | `com.leonardofox346.io` |
 | 版本 | `2.5.7_final`（versionCode 5） |
 | 形态 | 单 Activity 多标签 WebView 浏览器，全部代码为 Java |
-| 最低系统 | Android 7.0（API 24） |
-| 目标系统 | Android 14（API 34） |
-| 主页 | <https://leonardofox346.github.io> |
-| 音乐页 | <https://leonardofox346.github.io/music/> |
+| 最低系统 | Android 10（API 29） |
+| 目标系统 | Android 17（API 37） |
+| 主页 | <https://nardofox.cn> |
+| 音乐页 | <https://nardofox.cn/music/> |
 | 新标签页 | <https://www.bing.com> |
 
 ---
@@ -32,14 +32,14 @@
 | 多标签浏览 | 最多同时活跃 **1–9** 个标签，数量可在设置里用滑块调（默认 3）；标签集合页可查看/切换/关闭（`TabManagerActivity`） |
 | 导航栏 | 后退 / 前进 / 刷新 / 主页 / 新标签 / 更多 |
 | 「更多」菜单 | 返回主页、**来点音乐？**（直接打开音乐的页面）、标签页集合、设置 |
-| 下载 | 页面内下载交给系统下载器 |
+| 下载 | 页面内下载会被拦截并弹窗提示（「下载已禁止」），不做文件保存 |
 | 清除缓存 | 设置里一键清 WebView 缓存与 `webview.db` |
 | 权限说明 | 设置里以对话框列出申请了哪些权限、为什么 |
 | 隐私协议 | 内置页面，另有「关于此网站」「关于APP作者」「关于 KIMI Code」入口 |
 | 外部唤起 | 支持其他应用以 `open_url` 参数直接打开指定网址 |
 
 > 申请的系统权限只有两个：`INTERNET`、`ACCESS_NETWORK_STATE`（见 `AndroidManifest.xml`）。
-> 设置页的权限说明里还提到可选的 `WRITE_EXTERNAL_STORAGE`，但**清单里并没有声明**，属于文案遗留，以清单为准。
+> 设置页的权限说明已同步为「仅两项权限」，并明确说明本应用**不提供下载功能**（页面内触发的下载会被拦截并提示）。
 
 ## 三、源码结构
 
@@ -50,10 +50,10 @@
 │   ├── proguard-rules.pro              混淆规则（release 未开启混淆）
 │   └── src/main/
 │       ├── AndroidManifest.xml         权限、Activity 注册
-│       ├── java/com/leonardofox346/io/ 全部 Java 源码（10 个类）
+│       ├── java/com/leonardofox346/io/ 全部 Java 源码（11 个类）
 │       └── res/                        布局、图标、颜色、字符串
-├── gradle/wrapper/                     Gradle Wrapper（8.14.5）
-├── build.gradle                        顶层构建脚本（AGP 8.13.2）
+├── gradle/wrapper/                     Gradle Wrapper（9.6.0）
+├── build.gradle                        顶层构建脚本（AGP 9.4.1）
 ├── settings.gradle                     工程名 Lab.Nardo
 └── 1.png                               工程截图
 ```
@@ -65,14 +65,17 @@
 | `SplashActivity` | 启动页 |
 | `PrivacyConsentActivity` / `PrivacyPolicyActivity` | 隐私同意 / 隐私协议内容 |
 | `MainActivity` | 主界面：标签管理、WebView 配置、导航与菜单 |
-| `Tab` / `TabAdapter` / `TabCardAdapter` | 标签数据模型与两种列表适配器 |
+| `Tab` | 标签数据模型（URL、标题、WebView、休眠状态） |
+| `TabUtils` | WebView 工厂与休眠/唤醒/销毁（原三处重复代码收拢于此） |
+| `TabCardAdapter` | 标签卡片适配器 |
 | `TabManagerActivity` | 标签页集合页 |
 | `SettingsActivity` | 设置：清缓存、活跃标签数、权限声明、隐私、关于 |
 | `AboutKimiActivity` | 关于 KIMI Code |
+| `UiInsets` | 边到边（edge-to-edge）系统栏内边距工具 |
 
 ## 四、怎么构建
 
-前置：**Android Studio**（或本地 Android SDK）+ **JDK 17**。
+前置：**Android Studio**（或本地 Android SDK）+ **JDK 17 及以上**（本机实测 JDK 21）。
 
 ```bash
 # 1) 让 Gradle 知道 SDK 在哪（此文件不入库，需自己生成）

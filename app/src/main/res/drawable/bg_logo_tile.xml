@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  头图里 logo 的白色圆角块托底。
+  ★ 为什么必须是白底而不是半透明：`ic_deepseek` 的填充色是品牌蓝 #4D6BFE，
+    直接压在蓝色渐变头图上会「蓝压蓝」几乎看不见（实测第一版就是这样）。
+    白底既解决对比度，又正好是 DeepSeek 官方图标本身的观感。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="18dp" />
+    <solid android:color="#FFFFFFFF" />
+</shape>

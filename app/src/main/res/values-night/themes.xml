@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  深色方案下的主题覆盖
+  · 带限定符目录里的 style 是「整份替换」而不是逐项合并，
+    所以这里只写派生自 Base.Theme.LabNardo 的 Theme.LabNardo，不复制整份主题。
+  · 只改系统栏图标明暗：深色底 → 用浅色图标，否则状态栏/导航栏图标会「黑底黑字」。
+-->
+<resources>
+
+    <style name="Theme.LabNardo" parent="Base.Theme.LabNardo">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+</resources>

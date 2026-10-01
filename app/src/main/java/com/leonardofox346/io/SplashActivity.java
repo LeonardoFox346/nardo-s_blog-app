@@ -11,35 +11,43 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
+/**
+ * 启动页（MD3）：主色底 + Logo/标题/副标题依次入场，2.5s 后按隐私协议是否已同意分流。
+ *
+ * <p>改动用的是 {@code Theme.LabNardo.Splash}（主色窗口背景 + 深色状态栏图标），
+ * 不再依赖已被 MD3 主题移除的 ActionBar；底部版本号改为运行期读取
+ * {@link BuildConfig#VERSION_NAME}，不会再随发版漂移。</p>
+ */
 public class SplashActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "LabNardoPrefs";
     private static final String KEY_PRIVACY_ACCEPTED = "privacy_accepted";
+    private static final long SPLASH_DELAY_MS = 2500L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_splash);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        UiInsets.applyTo(findViewById(R.id.splashRoot));
 
         ImageView ivLogo = findViewById(R.id.ivLogo);
         TextView tvTitle = findViewById(R.id.tvTitle);
         TextView tvSubtitle = findViewById(R.id.tvSubtitle);
+        TextView tvFooter = findViewById(R.id.tvFooter);
 
-        // Logo scale up + fade in
+        tvFooter.setText(getString(R.string.splash_footer, BuildConfig.VERSION_NAME));
+
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(ivLogo, "scaleX", 0.3f, 1.0f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(ivLogo, "scaleY", 0.3f, 1.0f);
         ObjectAnimator fadeLogo = ObjectAnimator.ofFloat(ivLogo, "alpha", 0f, 1f);
 
-        // Title slide up + fade in
         ObjectAnimator transY = ObjectAnimator.ofFloat(tvTitle, "translationY", 60f, 0f);
         ObjectAnimator fadeTitle = ObjectAnimator.ofFloat(tvTitle, "alpha", 0f, 1f);
 
-        // Subtitle fade in
+        ObjectAnimator transYSub = ObjectAnimator.ofFloat(tvSubtitle, "translationY", 30f, 0f);
         ObjectAnimator fadeSub = ObjectAnimator.ofFloat(tvSubtitle, "alpha", 0f, 1f);
 
         AnimatorSet logoSet = new AnimatorSet();
@@ -51,22 +59,24 @@ public class SplashActivity extends AppCompatActivity {
         titleSet.setDuration(600);
 
         AnimatorSet subSet = new AnimatorSet();
-        subSet.play(fadeSub);
+        subSet.playTogether(transYSub, fadeSub);
         subSet.setDuration(500);
 
         AnimatorSet fullSet = new AnimatorSet();
         fullSet.playSequentially(logoSet, titleSet, subSet);
         fullSet.start();
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-            boolean accepted = prefs.getBoolean(KEY_PRIVACY_ACCEPTED, false);
-            if (accepted) {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            } else {
-                startActivity(new Intent(SplashActivity.this, PrivacyConsentActivity.class));
-            }
-            finish();
-        }, 2500);
+        new Handler(Looper.getMainLooper()).postDelayed(this::goNext, SPLASH_DELAY_MS);
+    }
+
+    private void goNext() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean accepted = prefs.getBoolean(KEY_PRIVACY_ACCEPTED, false);
+        Class<?> next = accepted ? MainActivity.class : PrivacyConsentActivity.class;
+        startActivity(new Intent(this, next));
+        finish();
     }
 }

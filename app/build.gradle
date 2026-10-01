@@ -2,22 +2,57 @@ plugins {
     id 'com.android.application'
 }
 
+// ── 发布签名 ────────────────────────────────────────────────
+// 口令与密钥库路径放在仓库同级的 keystore.properties 里（已被 .gitignore 挡住），
+// 密钥库真身也在仓库外：D:\WEB\APP\keystore\labnardo-release.jks。
+// ⛔ 文件不存在时**静默跳过** —— 这样没有密钥的人（比如换了台机器）拉下代码
+//    仍能跑 assembleDebug / assembleRelease，只是 release 出未签名包。
+// 背景：旧 keystore 已于 2026-09-19 确认丢失，本文件配合的是站长 2026-10-01
+//      要求新生成的那把钥（版本 3.0.0_beta 起启用）。
+def keystorePropsFile = rootProject.file('keystore.properties')
+def hasReleaseSigning = keystorePropsFile.exists()
+def keystoreProps = new Properties()
+if (hasReleaseSigning) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+
 android {
     namespace 'com.leonardofox346.io'
-    compileSdk 34
+    compileSdk 37
 
     defaultConfig {
         applicationId "com.leonardofox346.io"
-        minSdk 24
-        targetSdk 34
-        versionCode 5
-        versionName "2.5.7_final"
+        minSdk 29
+        targetSdk 37
+        versionCode 6
+        versionName "3.0.0_beta"
+    }
+
+    buildFeatures {
+        // SplashActivity / SettingsActivity 要读 BuildConfig.VERSION_NAME 填版本号
+        buildConfig true
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasReleaseSigning) {
+                // 有密钥时 assembleRelease 直接出**已签名**包，放在 app/release/ 供备份脚本上传。
+                // 仍可用 Android Studio 的 Generate Signed Bundle / APK 手工出包（等效）。
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
@@ -27,8 +62,9 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.activity:activity:1.13.0'
 }

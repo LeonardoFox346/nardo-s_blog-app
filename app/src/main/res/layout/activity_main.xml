@@ -1,69 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 主界面（MD3）
+  · 顶部 MaterialToolbar：承载网页标题与「更多」菜单（MD3 top app bar，无导航图标 —— 前进/后退由底部操作栏承担）
+  · 中部 WebView 容器
+  · 底部操作栏：MD3 图标按钮组（后退/前进/新建/刷新/更多）
+  · 边到边：系统栏留白由 MainActivity 通过 UiInsets 施加（顶部给 toolbar，其余给根布局）
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?attr/colorSurface">
 
-    <!-- WebView Container -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/TextAppearance.LabNardo.TitleMedium"
+        app:menu="@menu/menu_more" />
+
+    <!--
+      加载进度条：站点首页子资源多，冷启动时 WebView 会白屏好几秒。
+      没有它用户分不清「正在加载」和「挂了」—— 站长 2026-10-01 反馈即此。
+      由 TabUtils 的 onPageStarted / onPageFinished / onReceivedError 驱动。
+    -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:indicatorColor="?attr/colorPrimary"
+        app:trackColor="?attr/colorSurfaceContainerHighest"
+        app:trackThickness="3dp" />
+
     <FrameLayout
         android:id="@+id/webViewContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Bottom Navigation Bar -->
     <LinearLayout
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
+        android:minHeight="64dp"
         android:orientation="horizontal"
-        android:background="?attr/colorSurface"
-        android:elevation="8dp"
+        android:background="?attr/colorSurfaceContainer"
+        android:elevation="3dp"
         android:gravity="center">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
             android:src="@drawable/ic_nav_back"
-            android:contentDescription="上一页" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <ImageButton
             android:id="@+id/btnForward"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_forward"
             android:src="@drawable/ic_nav_forward"
-            android:contentDescription="下一页" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <ImageButton
             android:id="@+id/btnNewTab"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_new_tab"
             android:src="@drawable/ic_nav_add"
-            android:contentDescription="新增空白页" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <ImageButton
             android:id="@+id/btnRefresh"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_refresh"
             android:src="@drawable/ic_nav_refresh"
-            android:contentDescription="刷新" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <ImageButton
             android:id="@+id/btnMore"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_more"
             android:src="@drawable/ic_nav_more"
-            android:contentDescription="更多" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 

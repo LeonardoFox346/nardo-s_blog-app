@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 启动页（MD3）
+  · 背景取主题色 colorPrimary（由 Theme.LabNardo.Splash 提供），内容用 colorOnPrimary
+  · 边到边留白由 UiInsets 施加
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/splashRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary">
@@ -8,47 +15,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="32dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivLogo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:alpha="0"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
             android:src="@drawable/app_icon"
-            android:alpha="0" />
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.LabNardo.Circle" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lab.Nardo"
-            android:textColor="@android:color/white"
-            android:textSize="36sp"
-            android:textStyle="bold"
             android:layout_marginTop="24dp"
-            android:alpha="0" />
+            android:alpha="0"
+            android:text="@string/splash_title"
+            android:textAppearance="?attr/textAppearanceDisplaySmall"
+            android:textColor="?attr/colorOnPrimary" />
 
         <TextView
             android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="带你探索科技的奥秘"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
             android:layout_marginTop="8dp"
-            android:alpha="0" />
+            android:alpha="0"
+            android:text="@string/splash_subtitle"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnPrimary" />
 
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tvFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:text="Powered By LeonardoFox · Version 2.5.7_final"
-        android:textColor="#80FFFFFF"
-        android:textSize="12sp"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="?attr/colorOnPrimary"
+        android:alpha="0.7" />
 
 </FrameLayout>

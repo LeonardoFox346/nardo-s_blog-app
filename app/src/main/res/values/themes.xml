@@ -1,22 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 主题 —— Material Design 3（Material 3 DayNight）
+  · 父主题由 MD2 的 Theme.MaterialComponents.* 升级为 MD3 的 Theme.Material3.*
+  · 完整声明 MD3 色彩角色，配合 values-night 自动切换深色方案
+  · 全部 Activity 使用 NoActionBar，标题栏由 MaterialToolbar 承担（MD3 规范）
+  · 边到边（edge-to-edge）：状态栏/导航栏透明，内容由 WindowInsets 留白处理
+-->
 <resources>
-    <style name="Theme.LabNardo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+    <!-- 基线主题：所有实际样式都放这里，Theme.LabNardo 只做「浅色/深色」两支派生。
+         这样 values-night 只需覆盖系统栏图标明暗两个开关，不必复制整份主题
+         （带限定符目录里的 style 是整份替换，不是逐项合并）。 -->
+    <style name="Base.Theme.LabNardo" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary -->
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorPrimaryContainer">@color/md_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/md_on_primary_container</item>
+
+        <!-- Secondary -->
+        <item name="colorSecondary">@color/md_secondary</item>
+        <item name="colorOnSecondary">@color/md_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/md_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_secondary_container</item>
+
+        <!-- Tertiary -->
+        <item name="colorTertiary">@color/md_tertiary</item>
+        <item name="colorOnTertiary">@color/md_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/md_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/md_on_tertiary_container</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/md_error</item>
+        <item name="colorOnError">@color/md_on_error</item>
+        <item name="colorErrorContainer">@color/md_error_container</item>
+        <item name="colorOnErrorContainer">@color/md_on_error_container</item>
+
+        <!-- Surface / Background -->
+        <item name="android:colorBackground">@color/md_background</item>
+        <item name="colorOnBackground">@color/md_on_background</item>
+        <item name="colorSurface">@color/md_surface</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+        <item name="colorSurfaceVariant">@color/md_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <!-- 注意：这里不设 colorSurfaceTint —— Material 1.14 并未定义该属性（已实查其 R.txt），
+             MD3 的层级表达改用 colorSurfaceContainer* 系列，无需高程着色。 -->
+        <item name="colorSurfaceInverse">@color/md_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/md_inverse_on_surface</item>
+
+        <!-- Outline / Scrim -->
+        <item name="colorOutline">@color/md_outline</item>
+        <item name="colorOutlineVariant">@color/md_outline_variant</item>
+
+        <!-- 系统栏：边到边（Android 15+ 起系统栏强制透明，这里显式声明以统一各版本表现） -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- 窗口背景，避免启动瞬间白屏/黑屏闪烁 -->
+        <item name="android:windowBackground">@color/md_background</item>
     </style>
 
-    <style name="Theme.LabNardo.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    <!-- 浅色方案：系统栏底色浅，图标用深色 -->
+    <style name="Theme.LabNardo" parent="Base.Theme.LabNardo" />
+
+    <!-- 启动页：无标题栏 + 主色底（品牌露出），仍然是完整 MD3 主题的派生 -->
+    <style name="Theme.LabNardo.Splash">
+        <item name="android:windowBackground">@color/md_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <!-- MD3 列表项样式：设置页按钮统一为「左图标 + 文字」的大按钮 -->
+    <style name="Widget.LabNardo.SettingsAction" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">16dp</item>
+        <item name="iconTint">?attr/colorOnSecondaryContainer</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <!-- MD3 形状：正圆（圆形头像用；显式声明避免依赖 Material 内部样式名） -->
+    <style name="ShapeAppearance.LabNardo.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- MD3 形状：圆角方块（品牌图标块用，如开发历程页的 Kimi 标识） -->
+    <style name="ShapeAppearance.LabNardo.RoundedSquare" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">25%</item>
+    </style>
+
+    <!-- MD3 标题文字样式 -->
+    <style name="TextAppearance.LabNardo.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.LabNardo.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

@@ -30,6 +30,14 @@ captures/
 .externalNativeBuild/
 .cxx/
 
+# ---------- 签名密钥（⛔ 绝不入库） ----------
+# keystore.properties 里是明文口令；*.jks/.keystore 是私钥本体。
+# 真身放在仓库外的 D:\WEB\APP\keystore\，这里再挡一道防手滑。
+keystore.properties
+*.jks
+*.keystore
+signing.properties
+
 # ---------- 系统 / 编辑器 ----------
 .DS_Store
 Thumbs.db

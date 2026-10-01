@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 能力卡左侧的编号徽章底：圆形，与头图同一套渐变。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:angle="45"
+        android:startColor="#FF4D6BFE"
+        android:endColor="#FF8A5CF6" />
+</shape>

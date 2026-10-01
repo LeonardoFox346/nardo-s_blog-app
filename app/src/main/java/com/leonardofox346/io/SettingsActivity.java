@@ -1,55 +1,71 @@
 package com.leonardofox346.io;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+/**
+ * 设置页（MD3）。
+ *
+ * <p>入口按钮由普通 {@code Button} 换成 {@code MaterialButton}（{@code Widget.LabNardo.SettingsAction}），
+ * 对话框由 {@code android.app.AlertDialog} 换成 {@link MaterialAlertDialogBuilder}，
+ * 标题栏由 ActionBar 换成布局里的 {@link MaterialToolbar}，全部文案外置到 strings.xml。</p>
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "LabNardoPrefs";
     private static final String KEY_MAX_ACTIVE_TABS = "max_active_tabs";
     private static final int DEFAULT_MAX_ACTIVE_TABS = 3;
-    private static final String ABOUT_SITE_URL = "https://leonardofox346.github.io/aboutsite/";
-    private static final String ABOUT_APP_URL = "https://leonardofox346.github.io/about/";
+    private static final int MAX_ACTIVE_TABS = 9;
+    private static final String ABOUT_SITE_URL = "https://nardofox.cn/aboutsite/";
+    private static final String ABOUT_APP_URL = "https://nardofox.cn/about/";
 
     private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_settings);
+        UiInsets.applyTo(findViewById(R.id.settingsRoot));
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("设置");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        Button btnClearCache = findViewById(R.id.btnClearCache);
-        Button btnActiveTabs = findViewById(R.id.btnActiveTabs);
-        Button btnPermissions = findViewById(R.id.btnPermissions);
-        Button btnPrivacy = findViewById(R.id.btnPrivacy);
-        Button btnAboutSite = findViewById(R.id.btnAboutSite);
-        Button btnAboutApp = findViewById(R.id.btnAboutApp);
-        Button btnAboutKimi = findViewById(R.id.btnAboutKimi);
+        TextView tvBrandInfo = findViewById(R.id.tvBrandInfo);
+        tvBrandInfo.setText(getString(R.string.settings_brand_info, BuildConfig.VERSION_NAME));
+
+        MaterialButton btnClearCache = findViewById(R.id.btnClearCache);
+        MaterialButton btnActiveTabs = findViewById(R.id.btnActiveTabs);
+        MaterialButton btnPermissions = findViewById(R.id.btnPermissions);
+        MaterialButton btnPrivacy = findViewById(R.id.btnPrivacy);
+        MaterialButton btnAboutSite = findViewById(R.id.btnAboutSite);
+        MaterialButton btnAboutApp = findViewById(R.id.btnAboutApp);
+        MaterialButton btnAboutAi = findViewById(R.id.btnAboutAi);
 
         btnClearCache.setOnClickListener(v -> clearCache());
         btnActiveTabs.setOnClickListener(v -> showActiveTabsDialog());
         btnPermissions.setOnClickListener(v -> showPermissions());
-        btnPrivacy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
+        btnPrivacy.setOnClickListener(v ->
+                startActivity(new Intent(this, PrivacyPolicyActivity.class)));
         btnAboutSite.setOnClickListener(v -> openUrl(ABOUT_SITE_URL));
         btnAboutApp.setOnClickListener(v -> openUrl(ABOUT_APP_URL));
-        btnAboutKimi.setOnClickListener(v -> startActivity(new Intent(this, AboutKimiActivity.class)));
+        btnAboutAi.setOnClickListener(v ->
+                startActivity(new Intent(this, AboutAiActivity.class)));
     }
 
     private void clearCache() {
@@ -60,19 +76,15 @@ public class SettingsActivity extends AppCompatActivity {
         deleteDatabase("webview.db");
         deleteDatabase("webviewCache.db");
 
-        Toast.makeText(this, "缓存已清除", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.toast_cache_cleared, Toast.LENGTH_SHORT).show();
     }
 
     private void showPermissions() {
-        new AlertDialog.Builder(this)
-            .setTitle("权限声明")
-            .setMessage("本应用为纳多狐狐实验室（leonardofox346.github.io）官方浏览器客户端，申请以下系统权限：\n\n" +
-                "• INTERNET（必需）\n   用于访问纳多狐狐实验室网站及其他网页内容，是浏览功能的基础权限。\n\n" +
-                "• ACCESS_NETWORK_STATE（必需）\n   用于检测当前网络连接状态，判断网页能否正常加载。\n\n" +
-                "• WRITE_EXTERNAL_STORAGE（可选）\n   仅在您主动下载文件时用于将文件保存到设备存储中。\n\n" +
-                "以上权限均为实现浏览和下载功能所必需，本应用不会利用这些权限收集或上传您的任何个人信息。")
-            .setPositiveButton("确定", null)
-            .show();
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.permissions_title)
+                .setMessage(R.string.permissions_message)
+                .setPositiveButton(R.string.action_confirm, null)
+                .show();
     }
 
     private void openUrl(String url) {
@@ -85,49 +97,40 @@ public class SettingsActivity extends AppCompatActivity {
     private void showActiveTabsDialog() {
         int currentValue = prefs.getInt(KEY_MAX_ACTIVE_TABS, DEFAULT_MAX_ACTIVE_TABS);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("活跃标签页数量");
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_active_tabs, null);
+        TextView tvValue = dialogView.findViewById(R.id.tvTabCount);
+        TextView tvHint = dialogView.findViewById(R.id.tvTabCountHint);
+        SeekBar seekBar = dialogView.findViewById(R.id.seekTabCount);
 
-        TextView tvValue = new TextView(this);
         tvValue.setText(String.valueOf(currentValue));
-        tvValue.setTextSize(24);
-        tvValue.setPadding(0, 16, 0, 16);
-        tvValue.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-        SeekBar seekBar = new SeekBar(this);
-        seekBar.setMax(9);
+        tvHint.setText(R.string.dialog_tabs_hint);
+        seekBar.setMax(MAX_ACTIVE_TABS - 1);
         seekBar.setProgress(currentValue - 1);
-        seekBar.setPadding(32, 16, 32, 16);
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
                 tvValue.setText(String.valueOf(progress + 1));
             }
+
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
         });
 
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.addView(tvValue);
-        layout.addView(seekBar);
-        builder.setView(layout);
-
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            int newValue = seekBar.getProgress() + 1;
-            prefs.edit().putInt(KEY_MAX_ACTIVE_TABS, newValue).apply();
-            Toast.makeText(this, "活跃标签页数量已设置为 " + newValue, Toast.LENGTH_SHORT).show();
-        });
-        builder.setNegativeButton("取消", null);
-        builder.show();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_tabs_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.action_confirm, (dialog, which) -> {
+                    int newValue = seekBar.getProgress() + 1;
+                    prefs.edit().putInt(KEY_MAX_ACTIVE_TABS, newValue).apply();
+                    Toast.makeText(this, getString(R.string.toast_tabs_updated, newValue),
+                            Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 }

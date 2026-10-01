@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo MD3 色彩 — 日间（浅色）
+  色彩角色命名遵循 Material Design 3 规范（material_theme_builder 基线紫色方案）。
+  对应深色方案见 res/values-night/colors.xml（同名覆盖）。
+-->
+<resources>
+
+    <!-- Primary（主色） -->
+    <color name="md_primary">#FF6750A4</color>
+    <color name="md_on_primary">#FFFFFFFF</color>
+    <color name="md_primary_container">#FFEADDFF</color>
+    <color name="md_on_primary_container">#FF21005D</color>
+
+    <!-- Secondary（次色） -->
+    <color name="md_secondary">#FF625B71</color>
+    <color name="md_on_secondary">#FFFFFFFF</color>
+    <color name="md_secondary_container">#FFE8DEF8</color>
+    <color name="md_on_secondary_container">#FF1D192B</color>
+
+    <!-- Tertiary（强调色） -->
+    <color name="md_tertiary">#FF7D5260</color>
+    <color name="md_on_tertiary">#FFFFFFFF</color>
+    <color name="md_tertiary_container">#FFFFD8E4</color>
+    <color name="md_on_tertiary_container">#FF31111D</color>
+
+    <!-- Error（错误） -->
+    <color name="md_error">#FFB3261E</color>
+    <color name="md_on_error">#FFFFFFFF</color>
+    <color name="md_error_container">#FFF9DEDC</color>
+    <color name="md_on_error_container">#FF410E0B</color>
+
+    <!-- Surface（表面）与背景 -->
+    <color name="md_background">#FFFFFBFE</color>
+    <color name="md_on_background">#FF1C1B1F</color>
+    <color name="md_surface">#FFFFFBFE</color>
+    <color name="md_on_surface">#FF1C1B1F</color>
+    <color name="md_surface_variant">#FFE7E0EC</color>
+    <color name="md_on_surface_variant">#FF49454F</color>
+    <color name="md_inverse_surface">#FF313033</color>
+    <color name="md_inverse_on_surface">#FFF4EFF4</color>
+
+    <!-- Outline（描边） -->
+    <color name="md_outline">#FF79747E</color>
+    <color name="md_outline_variant">#FFCAC4D0</color>
+
+    <!-- 其它 -->
+    <color name="md_scrim">#FF000000</color>
+    <color name="md_shadow">#FF000000</color>
+
+    <!-- 语义辅助色（沿用原设计取值，仅用于标签页状态等局部点缀） -->
+    <color name="status_active">#FF2E7D32</color>
+    <color name="status_hibernated">#FF757575</color>
+
+</resources>

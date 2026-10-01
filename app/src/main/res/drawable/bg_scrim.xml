@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  首次启动隐私确认弹窗背后的遮罩（博客站 agreement-overlay 的 darken 层同款做法）。
+  弹窗本体是「卡片 + 遮罩」，不是一整页 —— 与 _AI文档/92d 补遗里记的站长口径一致。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#A6000000" />
+</shape>

@@ -1,33 +1,42 @@
 package com.leonardofox346.io;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 主界面：单 Activity + 多标签 WebView 宿主。
+ *
+ * <p>MD3 改造要点：
+ * <ul>
+ *   <li>标题栏由隐藏的 ActionBar 换成 {@link MaterialToolbar}（MD3 top app bar），
+ *       并顺带显示当前网页标题；「更多」菜单同时挂在工具栏溢出菜单与底部栏按钮上。</li>
+ *   <li>边到边：{@code WindowCompat.setDecorFitsSystemWindows(false)} + {@link UiInsets}。</li>
+ *   <li>WebView 创建/休眠/唤醒统一走 {@link TabUtils}（原先两份重复代码）。</li>
+ *   <li>{@code onBackPressed()} 覆写改为 {@link OnBackPressedCallback}（前者已废弃）。</li>
+ *   <li>{@code startActivityForResult} 改为 {@link ActivityResultLauncher}（前者已废弃）。</li>
+ * </ul>
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private static final String HOME_URL = "https://leonardofox346.github.io";
+    private static final String HOME_URL = "https://nardofox.cn";
     private static final String NEW_TAB_URL = "https://www.bing.com";
-    private static final String MUSIC_URL = "https://leonardofox346.github.io/music/";
-    private static final int REQUEST_TAB_MANAGER = 1001;
+    private static final String MUSIC_URL = "https://nardofox.cn/music/";
     private static final String PREFS_NAME = "LabNardoPrefs";
     private static final String KEY_MAX_ACTIVE_TABS = "max_active_tabs";
     private static final int DEFAULT_MAX_ACTIVE_TABS = 3;
@@ -35,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private static List<Tab> sharedTabs;
     private static int sharedCurrentTabIndex = -1;
 
+    private MaterialToolbar toolbar;
     private FrameLayout webViewContainer;
-    private List<Tab> tabs = new ArrayList<>();
+    private final List<Tab> tabs = new ArrayList<>();
     private int currentTabIndex = -1;
     private int nextTabId = 1;
 
@@ -46,34 +56,96 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnRefresh;
     private ImageButton btnMore;
 
+    private com.google.android.material.progressindicator.LinearProgressIndicator progressBar;
+
+    private final TabUtils.OnPageLoadedListener pageLoadedListener = tab -> {
+        if (tab == getCurrentTab()) {
+            updateNavigationButtons();
+            updateToolbarTitle();
+        }
+    };
+
+    /**
+     * 加载进度回调。站点首页子资源多，冷启动会有数秒纯白；进度条让用户知道
+     * 「在加载」而不是「挂了」（站长 2026-10-01 反馈的正是这个观感问题）。
+     * 只有当前标签页的加载才动进度条，后台标签页不干扰。
+     */
+    private final TabUtils.OnLoadingListener loadingListener = new TabUtils.OnLoadingListener() {
+        @Override
+        public void onLoadingStarted(Tab tab) {
+            if (tab == getCurrentTab()) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onLoadingFinished(Tab tab) {
+            if (tab == getCurrentTab()) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    private final ActivityResultLauncher<Intent> tabManagerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() != RESULT_OK) {
+                    return;
+                }
+                Intent data = result.getData();
+                if (data == null) {
+                    return;
+                }
+                if (data.hasExtra("selected_tab")) {
+                    switchToTab(data.getIntExtra("selected_tab", currentTabIndex));
+                }
+                if ("close".equals(data.getStringExtra("action"))) {
+                    int closed = data.getIntExtra("closed_position", -1);
+                    if (closed >= 0 && closed < tabs.size()) {
+                        if (closed == currentTabIndex) {
+                            currentTabIndex = Math.min(currentTabIndex, tabs.size() - 1);
+                        } else if (closed < currentTabIndex) {
+                            currentTabIndex--;
+                        }
+                    }
+                    if (!tabs.isEmpty()) {
+                        switchToTab(currentTabIndex);
+                    }
+                }
+                updateNavigationButtons();
+                updateToolbarTitle();
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setOnMenuItemClickListener(item -> {
+            handleMenuAction(item.getItemId());
+            return true;
+        });
 
         webViewContainer = findViewById(R.id.webViewContainer);
+        progressBar = findViewById(R.id.progressBar);
         btnBack = findViewById(R.id.btnBack);
         btnForward = findViewById(R.id.btnForward);
         btnNewTab = findViewById(R.id.btnNewTab);
         btnRefresh = findViewById(R.id.btnRefresh);
         btnMore = findViewById(R.id.btnMore);
 
+        UiInsets.applyTopAndSidesTo(findViewById(R.id.mainRoot));
+        UiInsets.applyBottomTo(findViewById(R.id.bottomBar));
+
         setupButtons();
+        registerBackCallback();
         addNewTab(HOME_URL);
 
         String openUrl = getIntent().getStringExtra("open_url");
         if (openUrl != null) {
             openUrlInCurrentTab(openUrl);
         }
-    }
-
-    private int getMaxActiveTabs() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        return prefs.getInt(KEY_MAX_ACTIVE_TABS, DEFAULT_MAX_ACTIVE_TABS);
     }
 
     private void setupButtons() {
@@ -84,84 +156,90 @@ public class MainActivity extends AppCompatActivity {
         btnMore.setOnClickListener(v -> showMoreMenu());
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private void addNewTab(String url) {
-        WebView webView = new WebView(this);
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setLoadsImagesAutomatically(true);
-        settings.setAllowFileAccess(true);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        settings.setUserAgentString(settings.getUserAgentString() + " Lab.Nardo/2.5");
-
-        webView.setWebViewClient(new WebViewClient() {
+    private void registerBackCallback() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-                    Tab currentTab = tabs.get(currentTabIndex);
-                    currentTab.setUrl(url);
-                    currentTab.setTitle(view.getTitle());
-                    updateNavigationButtons();
+            public void handleOnBackPressed() {
+                Tab tab = getCurrentTab();
+                if (tab != null && tab.getWebView() != null && tab.getWebView().canGoBack()) {
+                    tab.getWebView().goBack();
+                    return;
                 }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+                // 交还控制权后必须重新启用，否则本回调一旦关掉就再也不拦返回键，
+                // 之后在 WebView 里按返回会直接退出应用（而不是先回上一页）。
+                setEnabled(true);
             }
         });
-        webView.setWebChromeClient(new WebChromeClient());
-        webView.setDownloadListener((downloadUrl, userAgent, contentDisposition, mimeType, contentLength) -> {
-            new AlertDialog.Builder(this)
-                .setTitle("下载已禁止")
-                .setIcon(R.drawable.app_icon)
-                .setMessage("为了您的设备安全，本应用已禁止下载功能。如需保存网页内容，建议截图或使用系统浏览器。")
-                .setPositiveButton("知道了", null)
-                .show();
-        });
-        webView.loadUrl(url);
+    }
 
+    private int getMaxActiveTabs() {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .getInt(KEY_MAX_ACTIVE_TABS, DEFAULT_MAX_ACTIVE_TABS);
+    }
+
+    private Tab getCurrentTab() {
+        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
+            return tabs.get(currentTabIndex);
+        }
+        return null;
+    }
+
+    private void addNewTab(String url) {
         Tab tab = new Tab(nextTabId++, url);
-        tab.setWebView(webView);
+        tab.setWebView(TabUtils.createWebView(this, tab, pageLoadedListener, loadingListener));
         tabs.add(tab);
 
         switchToTab(tabs.size() - 1);
+        // ⛔ TabUtils.createWebView 刻意「不」loadUrl（地址由调用方决定），
+        // 这里必须显式加载 —— 漏掉这一行的话，正常冷启动（走 SplashActivity、
+        // 不带 open_url extra）会永远停在空白页，只有带 extra 的路径才碰巧正常。
+        tab.getWebView().loadUrl(url);
         enforceActiveTabLimit();
     }
 
     private void switchToTab(int index) {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView currentWebView = tabs.get(currentTabIndex).getWebView();
-            if (currentWebView != null && currentWebView.getParent() != null) {
-                ((ViewGroup) currentWebView.getParent()).removeView(currentWebView);
-            }
+        Tab previous = getCurrentTab();
+        if (previous != null && previous.getWebView() != null
+                && previous.getWebView().getParent() instanceof android.view.ViewGroup) {
+            ((android.view.ViewGroup) previous.getWebView().getParent())
+                    .removeView(previous.getWebView());
         }
 
         currentTabIndex = index;
-        if (index >= 0 && index < tabs.size()) {
-            Tab tab = tabs.get(index);
+        Tab tab = getCurrentTab();
+        if (tab != null) {
             tab.setLastAccessTime(System.currentTimeMillis());
             if (tab.isHibernated()) {
-                wakeUpTab(tab);
+                TabUtils.wakeUp(this, tab, pageLoadedListener, loadingListener);
             }
-            WebView webView = tab.getWebView();
-            if (webView != null) {
-                webViewContainer.addView(webView);
+            if (tab.getWebView() != null && tab.getWebView().getParent() == null) {
+                webViewContainer.addView(tab.getWebView());
             }
         }
 
+        // 切标签时进度条归零：另一个标签页可能正在后台加载，进度条状态不该被带过来
+        progressBar.setVisibility(View.INVISIBLE);
+
         updateNavigationButtons();
+        updateToolbarTitle();
     }
 
     private void enforceActiveTabLimit() {
         int maxActive = getMaxActiveTabs();
         int activeCount = 0;
         for (Tab t : tabs) {
-            if (!t.isHibernated()) activeCount++;
+            if (!t.isHibernated()) {
+                activeCount++;
+            }
         }
         while (activeCount > maxActive) {
             Tab oldest = findOldestActiveTabExcludingCurrent();
-            if (oldest == null) break;
-            hibernateTab(oldest);
+            if (oldest == null) {
+                break;
+            }
+            TabUtils.hibernate(oldest);
             activeCount--;
         }
     }
@@ -169,9 +247,11 @@ public class MainActivity extends AppCompatActivity {
     private Tab findOldestActiveTabExcludingCurrent() {
         Tab oldest = null;
         long oldestTime = Long.MAX_VALUE;
-        for (Tab t : tabs) {
-            if (t.isHibernated()) continue;
-            if (tabs.indexOf(t) == currentTabIndex) continue;
+        for (int i = 0; i < tabs.size(); i++) {
+            Tab t = tabs.get(i);
+            if (t.isHibernated() || i == currentTabIndex) {
+                continue;
+            }
             if (t.getLastAccessTime() < oldestTime) {
                 oldestTime = t.getLastAccessTime();
                 oldest = t;
@@ -180,133 +260,76 @@ public class MainActivity extends AppCompatActivity {
         return oldest;
     }
 
-    private void hibernateTab(Tab tab) {
-        if (tab.getWebView() != null) {
-            tab.setUrl(tab.getWebView().getUrl());
-            tab.setTitle(tab.getWebView().getTitle());
-            tab.getWebView().stopLoading();
-            tab.getWebView().loadUrl("about:blank");
-            tab.getWebView().clearHistory();
-            if (tab.getWebView().getParent() != null) {
-                ((ViewGroup) tab.getWebView().getParent()).removeView(tab.getWebView());
-            }
-            tab.setWebView(null);
-        }
-        tab.setHibernated(true);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void wakeUpTab(Tab tab) {
-        WebView webView = new WebView(this);
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setLoadsImagesAutomatically(true);
-        settings.setAllowFileAccess(true);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        settings.setUserAgentString(settings.getUserAgentString() + " Lab.Nardo/2.5");
-
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                tab.setUrl(url);
-                tab.setTitle(view.getTitle());
-            }
-        });
-        webView.setWebChromeClient(new WebChromeClient());
-        webView.setDownloadListener((downloadUrl, userAgent, contentDisposition, mimeType, contentLength) -> {
-            new AlertDialog.Builder(this)
-                .setTitle("下载已禁止")
-                .setIcon(R.drawable.app_icon)
-                .setMessage("为了您的设备安全，本应用已禁止下载功能。如需保存网页内容，建议截图或使用系统浏览器。")
-                .setPositiveButton("知道了", null)
-                .show();
-        });
-        webView.loadUrl(tab.getUrl());
-        tab.setWebView(webView);
-        tab.setHibernated(false);
-        tab.setLastAccessTime(System.currentTimeMillis());
-    }
-
     private void goBack() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null && webView.canGoBack()) {
-                webView.goBack();
-            } else {
-                Toast.makeText(this, "已经是第一页了", Toast.LENGTH_SHORT).show();
-            }
+        Tab tab = getCurrentTab();
+        if (tab == null || tab.getWebView() == null) {
+            return;
+        }
+        if (tab.getWebView().canGoBack()) {
+            tab.getWebView().goBack();
+        } else {
+            Toast.makeText(this, R.string.toast_first_page, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void goForward() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null && webView.canGoForward()) {
-                webView.goForward();
-            } else {
-                Toast.makeText(this, "已经是最后一页了", Toast.LENGTH_SHORT).show();
-            }
+        Tab tab = getCurrentTab();
+        if (tab == null || tab.getWebView() == null) {
+            return;
+        }
+        if (tab.getWebView().canGoForward()) {
+            tab.getWebView().goForward();
+        } else {
+            Toast.makeText(this, R.string.toast_last_page, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void refreshCurrentTab() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null) {
-                webView.reload();
-                Toast.makeText(this, "已刷新", Toast.LENGTH_SHORT).show();
-            }
+        Tab tab = getCurrentTab();
+        if (tab == null || tab.getWebView() == null) {
+            return;
         }
+        tab.getWebView().reload();
+        Toast.makeText(this, R.string.toast_refreshed, Toast.LENGTH_SHORT).show();
     }
 
     private void showMoreMenu() {
         PopupMenu popup = new PopupMenu(this, btnMore);
         popup.getMenuInflater().inflate(R.menu.menu_more, popup.getMenu());
-
         popup.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.menu_home) {
-                goHome();
-            } else if (id == R.id.menu_music) {
-                openUrlInCurrentTab(MUSIC_URL);
-            } else if (id == R.id.menu_tabs) {
-                openTabManager();
-            } else if (id == R.id.menu_settings) {
-                startActivity(new Intent(this, SettingsActivity.class));
-            }
+            handleMenuAction(item.getItemId());
             return true;
         });
-
         popup.show();
     }
 
-    private void goHome() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null) {
-                webView.loadUrl(HOME_URL);
-            }
+    private void handleMenuAction(int itemId) {
+        if (itemId == R.id.menu_home) {
+            goHome();
+        } else if (itemId == R.id.menu_music) {
+            openUrlInCurrentTab(MUSIC_URL);
+        } else if (itemId == R.id.menu_tabs) {
+            openTabManager();
+        } else if (itemId == R.id.menu_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 
+    private void goHome() {
+        openUrlInCurrentTab(HOME_URL);
+    }
+
     private void openUrlInCurrentTab(String url) {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null) {
-                webView.loadUrl(url);
-            }
+        Tab tab = getCurrentTab();
+        if (tab != null && tab.getWebView() != null) {
+            tab.getWebView().loadUrl(url);
         }
     }
 
     private void openTabManager() {
         sharedTabs = tabs;
         sharedCurrentTabIndex = currentTabIndex;
-        Intent intent = new Intent(this, TabManagerActivity.class);
-        startActivityForResult(intent, REQUEST_TAB_MANAGER);
+        tabManagerLauncher.launch(new Intent(this, TabManagerActivity.class));
     }
 
     public static List<Tab> getSharedTabs() {
@@ -317,80 +340,41 @@ public class MainActivity extends AppCompatActivity {
         return sharedCurrentTabIndex;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAB_MANAGER && resultCode == RESULT_OK && data != null) {
-            if (data.hasExtra("selected_tab")) {
-                int selected = data.getIntExtra("selected_tab", currentTabIndex);
-                switchToTab(selected);
-            }
-            if ("close".equals(data.getStringExtra("action"))) {
-                int closed = data.getIntExtra("closed_position", -1);
-                if (closed >= 0 && closed < tabs.size()) {
-                    if (closed == currentTabIndex) {
-                        currentTabIndex = Math.min(currentTabIndex, tabs.size() - 1);
-                    } else if (closed < currentTabIndex) {
-                        currentTabIndex--;
-                    }
-                }
-                if (tabs.size() > 0) {
-                    switchToTab(currentTabIndex);
-                }
-            }
-        }
-    }
-
     private void updateNavigationButtons() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null) {
-                btnBack.setEnabled(webView.canGoBack());
-                btnForward.setEnabled(webView.canGoForward());
-            } else {
-                btnBack.setEnabled(false);
-                btnForward.setEnabled(false);
-            }
-        } else {
-            btnBack.setEnabled(false);
-            btnForward.setEnabled(false);
-        }
+        Tab tab = getCurrentTab();
+        boolean canGoBack = tab != null && tab.getWebView() != null && tab.getWebView().canGoBack();
+        boolean canGoForward = tab != null && tab.getWebView() != null
+                && tab.getWebView().canGoForward();
+        btnBack.setEnabled(canGoBack);
+        btnForward.setEnabled(canGoForward);
+        btnBack.setAlpha(canGoBack ? 1.0f : 0.38f);
+        btnForward.setAlpha(canGoForward ? 1.0f : 0.38f);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (currentTabIndex >= 0 && currentTabIndex < tabs.size()) {
-            WebView webView = tabs.get(currentTabIndex).getWebView();
-            if (webView != null && webView.canGoBack()) {
-                webView.goBack();
-                return;
-            }
+    private void updateToolbarTitle() {
+        Tab tab = getCurrentTab();
+        String title = tab == null ? null : tab.getTitle();
+        if (title == null || title.trim().isEmpty()) {
+            title = getString(R.string.app_name);
         }
-        super.onBackPressed();
+        toolbar.setTitle(title);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         for (Tab tab : tabs) {
-            WebView webView = tab.getWebView();
-            if (webView != null) {
-                webView.stopLoading();
-                webView.loadUrl("about:blank");
-                webView.clearHistory();
-                if (webView.getParent() != null) {
-                    ((ViewGroup) webView.getParent()).removeView(webView);
-                }
-                webView.destroy();
-            }
+            TabUtils.destroyWebView(tab);
         }
         tabs.clear();
         sharedTabs = null;
+        sharedCurrentTabIndex = -1;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
         String url = intent.getStringExtra("open_url");
         if (url != null) {
             openUrlInCurrentTab(url);

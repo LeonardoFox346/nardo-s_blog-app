@@ -1,19 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lab.Nardo 全部界面文案（原本大量硬编码在布局与 Java 里，2026-10 MD3 重构时外置到此处）
+  · %1$s 类格式化字符串由 Java 侧通过 getString(res, args) 填入
+-->
 <resources>
     <string name="app_name">Lab.Nardo</string>
+
+    <!-- ===== 通用操作 ===== -->
+    <string name="action_back">后退</string>
+    <string name="action_forward">前进</string>
+    <string name="action_new_tab">新建标签页</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_more">更多</string>
+    <string name="action_confirm">确定</string>
+    <string name="action_cancel">取消</string>
+
+    <!-- ===== 主界面 ===== -->
+    <string name="toast_first_page">已经是第一页了</string>
+    <string name="toast_last_page">已经是最后一页了</string>
+    <string name="toast_refreshed">页面已刷新</string>
+    <string name="download_blocked_title">下载已禁止</string>
+    <string name="download_blocked_message">为了您的设备安全，本应用已禁止下载功能。如需保存网页内容，建议截图或使用系统浏览器。</string>
+
+    <!-- ===== 「更多」菜单 ===== -->
+    <string name="menu_home">返回主页</string>
+    <string name="menu_music">来点音乐？</string>
+    <string name="menu_tabs">标签页集合</string>
+    <string name="menu_settings">设置</string>
+
+    <!-- ===== 设置页 ===== -->
     <string name="settings_title">设置</string>
-    <string name="tab_manager_title">标签页集合</string>
-    <string name="about_kimi_title">关于 KIMI Code</string>
-    <string name="privacy_policy_title">隐私协议</string>
     <string name="clear_cache">清除缓存</string>
     <string name="permissions">权限声明</string>
-    <string name="privacy">隐私协议</string>
+    <string name="privacy">隐私与条款</string>
     <string name="about_site">关于此网站</string>
-    <string name="about_app">关于APP作者</string>
+    <string name="about_app_author">关于APP作者</string>
     <string name="active_tabs_count">活跃标签页数量</string>
-    <string name="about_kimi">关于 KIMI Code</string>
-    <string name="welcome">欢迎使用</string>
-    <string name="enter_app">进入应用</string>
-    <string name="read_privacy">阅读隐私协议</string>
-    <string name="agree_privacy">我已阅读并同意隐私协议</string>
+    <string name="about_app">关于本应用</string>
+    <string name="settings_brand_info">Lab.Nardo %1$s\n纳多狐狐实验室官方客户端\nPowered by LeonardoFox</string>
+    <string name="toast_cache_cleared">缓存已清除</string>
+    <string name="toast_tabs_updated">活跃标签页数量已设置为 %1$d</string>
+
+    <!-- 活跃标签页数量对话框 -->
+    <string name="dialog_tabs_title">活跃标签页数量</string>
+    <string name="dialog_tabs_hint">超出数量的标签页会被自动休眠以节省内存（可休眠 1–9 个，默认 3 个）。</string>
+
+    <!-- 权限声明对话框 -->
+    <string name="permissions_title">权限声明</string>
+    <string name="permissions_message">本应用为纳多狐狐实验室（nardofox.cn）官方浏览器客户端，仅申请以下两项系统权限：\n\n• INTERNET（必需）\n   用于访问纳多狐狐实验室网站及其他网页内容，是浏览功能的基础权限。\n\n• ACCESS_NETWORK_STATE（必需）\n   用于检测当前网络连接状态，判断网页能否正常加载。\n\n说明：早期版本文案中提到的 WRITE_EXTERNAL_STORAGE 权限并未在应用清单中声明，本应用也不提供文件下载功能。\n\n以上权限均为实现浏览功能所必需，本应用不会利用这些权限收集或上传您的任何个人信息。</string>
+
+    <!-- ===== 启动页 ===== -->
+    <string name="splash_title">Lab.Nardo</string>
+    <string name="splash_subtitle">带你探索科技的奥秘</string>
+    <string name="splash_footer">Powered By LeonardoFox · Version %1$s</string>
+
+    <!-- ===== 首次启动的隐私与条款确认弹窗 =====
+         写法对齐博客站 /privacy/ 的前置弹窗（themes/anzhiyu/layout/includes/agreement-modal.pug）：
+         标题用文档全称、正文三条摘要（粗体结论 + 说明）、两个**平级的真选项**按钮。
+         ⛔ 不设勾选框、不做默认勾选、不写成"同意我们收集数据" —— 本应用不收集数据，
+            这个弹窗的性质是「使用条款的知悉确认」。 -->
+    <string name="privacy_consent_title">隐私政策与使用条款</string>
+    <string name="privacy_consent_lead">首次使用，请阅读以下摘要后作出选择。</string>
+    <string name="privacy_consent_b1"><b>本应用不收集您的个人信息。</b>没有账号体系，不接入第三方统计，不投放广告，不写入任何 Cookie，也不索取位置、通讯录与存储等权限。</string>
+    <string name="privacy_consent_b2"><b>网页内容由第三方网站提供。</b>除纳多狐狐实验室网站外，页面内容不受本应用控制；您在网页中的输入与浏览行为由对应网站处理，请留意其隐私政策。</string>
+    <string name="privacy_consent_b3"><b>本应用仅申请两项权限。</b>INTERNET 与 ACCESS_NETWORK_STATE，分别用于访问网站与判断网络连接状态；文件下载功能已禁用。</string>
+    <string name="privacy_consent_more">以上为摘要，完整条款见《隐私政策与使用条款》</string>
+    <string name="privacy_consent_decline">不同意</string>
+    <string name="privacy_consent_agree">同意并继续</string>
+    <string name="toast_declined_exit">未同意，应用将退出</string>
+
+    <!-- ===== 标签页管理 ===== -->
+    <string name="tab_manager_title">标签页集合</string>
+    <string name="tab_manager_hint">点击卡片切换标签页，右上角可休眠或关闭。</string>
+    <string name="tab_status_hibernated">休眠中</string>
+    <string name="tab_status_current">当前活跃</string>
+    <string name="tab_status_active">活跃</string>
+    <string name="toast_keep_one_tab">至少保留一个标签页</string>
+    <string name="toast_tab_woken">已唤醒标签页</string>
+    <string name="toast_tab_hibernated">标签页已休眠</string>
+    <string name="cd_tab_sleep">休眠 / 唤醒标签页</string>
+    <string name="cd_tab_close">关闭标签页</string>
+
+    <!-- ===== 关于本应用 ===== -->
+    <string name="about_app_name">Lab.Nardo</string>
+    <string name="about_app_tagline">纳多狐狐实验室官方客户端</string>
+    <string name="about_app_version">版本 %1$s</string>
+    <string name="about_app_intro">一款为纳多狐狐实验室（nardofox.cn）读者准备的浏览客户端：多标签 WebView、活跃标签自动休眠，界面按 Material 3 规范重做。</string>
+    <string name="about_app_footer">© 2026 纳多狐狐实验室</string>
+
+    <!-- ===== AI 辅助编程（由「关于本应用」页的入口卡进入，同页展示 DeepSeek 与 Kimi 两段） ===== -->
+    <string name="ai_assist_title">AI 辅助编程</string>
+    <string name="ai_assist_hint">此APP使用了AI辅助编程 看简介并支持他们!</string>
+    <string name="about_ai_name">关于Deepseek V4.1 Flash</string>
+    <string name="about_ai_tagline">辅助代码生成</string>
+    <string name="about_ai_byline">本应用 Material 3 重构主力</string>
+    <string name="about_ai_section_work">核心能力</string>
+    <string name="about_ai_w1_title">代码与架构</string>
+    <string name="about_ai_w1_desc">直接读写源码：Java、Kotlin、XML 布局、Gradle 脚本，按设计规范重构界面与逻辑。</string>
+    <string name="about_ai_w2_title">研究与查证</string>
+    <string name="about_ai_w2_desc">联网检索、核对官方仓库元数据、逐条确认版本与 API 变更，凡结论必附出处。</string>
+    <string name="about_ai_w3_title">构建与真机验收</string>
+    <string name="about_ai_w3_desc">自己跑 Gradle 构建，把包装进模拟器或真机，逐页截图核对，不靠「应该没问题」。</string>
+    <string name="about_ai_w4_title">命令行与设备自动化</string>
+    <string name="about_ai_w4_desc">执行 shell、驱动 adb、按需写脚本批量操作，把证据实际跑出来而不是推断出来。</string>
+    <string name="about_ai_w5_title">跨会话长期记忆</string>
+    <string name="about_ai_w5_desc">上下文压缩加文档沉淀，换一个会话也能接上上一轮的线索，不必从头再问一遍。</string>
+    <string name="about_ai_footer">此页面由DEEPSEEK重构</string>
+
+    <!-- ===== 开发历程（现为「关于本应用」页里的一个章节） ===== -->
+    <string name="dev_history">开发历程</string>
+    <string name="dev_history_intro">Lab.Nardo 不是一次做成的。下面是它走到今天经过的几个阶段。</string>
+    <string name="dev_history_s1_date">2025 年</string>
+    <string name="dev_history_s1_title">版本:1.0</string>
+    <string name="dev_history_s1_desc">这个 APP 的第一行代码，还是和Java教程一起慢慢开始的 还是"Hello world"那时的界面还非常简陋 被我称为1.0时代目前已经废弃</string>
+    <string name="dev_history_s2_date">2026 年 6 月</string>
+    <string name="dev_history_s2_title">版本 2.5.7</string>
+    <string name="dev_history_s2_desc">现存Beta测试中安装包的构建时间。它的界面是 Material 2 时代的样式，也是本次重构之前的最后状态。由我和kimi code一起创建,写Android应用老麻烦了还是kimi的代码补全和建议能力强啊</string>
+    <string name="dev_history_s3_date">2026 年 10 月</string>
+    <string name="dev_history_s3_title">Material 3 全量重构</string>
+    <string name="dev_history_s3_desc">由DeepSeek V4.1执行：主题层重写、布局重做、文案外置、自适应图标、边到边适配、弃用 API 清理，并在模拟器上逐页验收。全权交给agent重构 我在一边喝着咖啡看着它慢慢工作也是一种享受了</string>
+    <string name="dev_history_s4_date">未完待续</string>
+    <string name="dev_history_s4_title">下一段</string>
+    <string name="dev_history_s4_desc">这一段还没写。</string>
+    <string name="dev_history_kimi_chapter">关于 Kimi Code</string>
+    <string name="dev_history_kimi_lead">这个APP的起点是 Kimi。重构保留了它当年的自我介绍，作为这段历史的记录。</string>
+
+    <!-- ===== Kimi 章节（现由「开发历程」页使用，文案原样保留） ===== -->
+    <string name="about_kimi_name">KIMI Code</string>
+    <string name="about_kimi_tagline">智能代码引擎</string>
+    <string name="about_kimi_section_capability">Kimi 的核心能力</string>
+    <string name="about_kimi_f1_title">代码生成与架构设计</string>
+    <string name="about_kimi_f1_desc">从需求分析到完整项目，支持多语言、多框架的工程级代码生成</string>
+    <string name="about_kimi_f2_title">深度研究 Swarm</string>
+    <string name="about_kimi_f2_desc">多 Agent 并行研究，网络搜索与文件分析协同，产出结构化报告</string>
+    <string name="about_kimi_f3_title">实时数据分析与可视化</string>
+    <string name="about_kimi_f3_desc">运行 Python、处理数据、生成图表，在对话中直接完成数据工作流</string>
+    <string name="about_kimi_f4_title">浏览器自动化与 WebBridge</string>
+    <string name="about_kimi_f4_desc">操控真实浏览器，截图、点击、填写表单，自动化完成网页操作</string>
+    <string name="about_kimi_f5_title">持久化记忆与定时任务</string>
+    <string name="about_kimi_f5_desc">Vault 长期记忆、Skills 技能模板、Cron 定时任务，跨越会话持续工作</string>
+    <string name="about_kimi_summary">KIMI Code 是 Moonshot AI 推出的编程智能体平台，\n集成代码、数据、浏览器与记忆能力，\n将复杂任务转化为高效的人机协作。</string>
+    <string name="about_kimi_footer">Designed for Builders. Powered by Moonshot AI.</string>
+
+    <!-- ===== 隐私协议正文 ===== -->
+    <!-- ===== 隐私与条款正文 =====
+         体例对齐博客站「隐私政策与使用条款」（D:\WEB\blog\source\privacy\index.md）：
+         两部分 + 连贯的「第 N 条」编号；文档用全称、导航用简称。
+         ⛔ 本应用不收集任何个人信息，勿写成「同意我们收集您的数据」。 -->
+    <string name="privacy_policy_title">隐私与条款</string>
+    <string name="privacy_doc_title">Lab.Nardo 隐私政策与使用条款</string>
+    <string name="privacy_doc_date">更新日期：2026 年 10 月 1 日</string>
+    <string name="privacy_doc_intro">本文件由两部分构成：第一部分为<b>隐私政策</b>（本应用如何处理您的信息），第二部分为<b>使用条款</b>（本站内容允许何种使用、禁止何种使用）。请您在使用本应用前完整阅读。</string>
+    <string name="privacy_part1">第一部分 · 隐私政策</string>
+    <string name="privacy_part1_sub">本应用如何处理您的信息</string>
+    <string name="privacy_part2">第二部分 · 使用条款</string>
+    <string name="privacy_part2_sub">本站内容允许何种使用、禁止何种使用</string>
+
+    <string name="privacy_s1_title">第一条　本应用自行产生的信息</string>
+    <string name="privacy_s1_body">本应用只在您的设备本地产生与保存下列信息，<b>不会上传至任何服务器</b>：\n\n• 浏览偏好 —— 活跃标签页数量等设置，保存在应用私有目录。\n• 网页缓存 —— WebView 为加速加载而缓存的网页资源，保存在应用私有目录。\n• 同意状态 —— 一个布尔值，记录您是否已同意本条款，以免每次启动重复打扰。\n\n以上数据可随时通过「设置 → 清除缓存」清除；卸载应用即全部删除。</string>
+
+    <string name="privacy_s2_title">第二条　本应用不收集的信息与未使用的服务</string>
+    <string name="privacy_s2_body"><b>第三方统计</b>：未接入　　<b>广告与推广</b>：无\n<b>用户账号与登录</b>：无　　<b>站内评论</b>：不提供\n<b>定位 / 通讯录 / 短信 / 相机 / 麦克风</b>：不申请\n<b>用户画像与跨应用追踪</b>：无\n\n因未接入统计服务，本应用<b>无从获取</b>您的使用次数、停留时长与点击路径。除您主动浏览的网页请求之外，本应用不向任何服务器发送数据。</string>
+
+    <string name="privacy_s3_title">第三条　本应用申请的权限</string>
+    <string name="privacy_s3_body">本应用仅在应用清单中声明以下两项权限，均用于实现基础浏览功能：\n\n• <b>INTERNET</b>（必需）—— 访问纳多狐狐实验室网站及其他网页内容。\n• <b>ACCESS_NETWORK_STATE</b>（必需）—— 检测当前网络连接状态，判断网页能否正常加载。\n\n说明：早期版本的设置页文案曾提到 WRITE_EXTERNAL_STORAGE，该权限<b>从未在应用清单中声明</b>，本应用也不提供文件下载功能，该文案已一并更正。\n\n以上权限不会用于收集或上传您的个人信息。</string>
+
+    <string name="privacy_s4_title">第四条　访问网站时由服务器记录的信息</string>
+    <string name="privacy_s4_body">本应用通过系统 WebView 加载网页，其网络请求与您在浏览器中直接访问<b>并无不同</b>。因此在浏览本站（nardofox.cn）时，站点的 Nginx 服务器会记录常规访问日志，字段包括：来源 IP、访问时间、请求路径与方法、HTTP 状态码、User-Agent、Referer（若发送）。\n\n该日志的用途<b>限于两项</b>：排查故障、识别并拦截恶意访问。本站<b>不将日志用于用户画像、广告投放或行为分析</b>，也不出售、不向第三方提供用于营销目的。详细口径见网站页面《隐私政策与使用条款》（nardofox.cn/privacy/）。</string>
+
+    <string name="privacy_s5_title">第五条　本地数据的存储与清除</string>
+    <string name="privacy_s5_body">本应用不设置账号，全部数据都留在您的设备上：\n\n• 「设置 → 清除缓存」—— 清除 WebView 的网页缓存与 Cookie（如有）。\n• 「设置 → 活跃标签页数量」—— 仅保存一个整数偏好。\n• 卸载应用 —— 应用私有目录随应用一并删除。\n\n本应用<b>不会</b>将您的浏览记录、历史或任何个人信息上传至任何服务器。</string>
+
+    <string name="privacy_s6_title">第六条　第三方网站与外部资源</string>
+    <string name="privacy_s6_body">除纳多狐狐实验室网站外，本应用加载的网页内容均由第三方网站提供，<b>不受本应用控制</b>。您在第三方网站中输入的账号、密码等信息，由该网站自行处理，其数据处理适用各服务商自身的隐私政策。\n\n页面所引用的外部资源（如图床、CDN、音乐与视频播放器）由 WebView 直接向相应服务商发起请求，故该服务商可获知您的 IP、User-Agent 等常规请求信息。<b>本应用无法控制、亦不参与</b>该等服务的数据处理。</string>
+
+    <string name="privacy_s7_title">第七条　文件下载</string>
+    <string name="privacy_s7_body">为保障设备安全，本应用<b>已禁用文件下载功能</b>。当您在网页中触发下载操作时，应用会提示该功能已被禁用。\n\n如需保存网页内容，建议：使用系统自带浏览器下载、对网页内容截图保存，或使用其他可信的下载工具。本应用不提供、不协助、不代理任何文件下载服务，因此也不对任何下载文件的内容、安全性或合法性负责。</string>
+
+    <string name="privacy_s8_title">第八条　政策的更新与联系方式</string>
+    <string name="privacy_s8_body">本政策可能不时更新。更新后的内容将在应用内发布，并标注最新更新日期；继续使用本应用即视为您已知悉更新后的内容。\n\n开发者：LeonardoFox（AI 协作者：Kimi Code、DeepSeek）\n网站：nardofox.cn\n\n如对本政策有任何疑问或建议，欢迎通过网站「关于本站」页面与我们联系。感谢您的使用，爱来自 Lab.Nardo！</string>
+
+    <string name="privacy_s9_title">第九条　定义</string>
+    <string name="privacy_s9_body"><b>一、本应用</b>，指 Lab.Nardo（包名 com.leonardofox346.io）。\n<b>二、本网站</b>，指 nardofox.cn 及其全部子域名所构成的站点。\n<b>三、本站内容</b>，指本网站上由站长原创的全部作品，包括但不限于文章正文、站内整理之表格与速查资料、页面文案、文章配图与截图。\n<b>四、训练</b>，指将本站内容用于生成式人工智能模型之预训练、继续预训练、监督微调、指令微调、对齐训练、蒸馏，或用于生成嵌入向量并入库、构建数据集与评测集等一切以改进模型能力为目的之处理行为。</string>
+
+    <string name="privacy_s10_title">第十条　内容版权</string>
+    <string name="privacy_s10_body">本网站之授权采<b>「一篇一议」原则</b>：每篇文章末尾均附版权声明，该声明为该篇之正式授权条款。文章未附声明、或您未能找到该声明时，依本条以下之默认规则处理，而本网站之默认声明为<b>「禁止转载引用」</b>。\n\n本应用仅为浏览工具，<b>不改变、也不代为解释</b>上述授权。版权详情见网站页面《隐私政策与使用条款》（nardofox.cn/privacy/）。</string>
+
+    <string name="privacy_s11_title">第十一条　许可使用</string>
+    <string name="privacy_s11_body">下列行为<b>无须事先取得许可</b>：\n\n• 个人阅读、收藏、打印及离线保存副本；\n• 引用本站内容之一段或一张表格（应注明出处）；\n• 设置链接、供搜索引擎收录、被人工智能检索服务引用。\n\n下列行为<b>须视该篇文章之版权声明而定</b>，声明为「禁止转载引用」者均须事先取得权利人书面许可：\n\n• 全文转载至其他网站、博客、公众号、论坛等任何平台；\n• 用于教学、培训或内部资料；\n• 用于商业产品、付费内容或印刷出版。</string>
+
+    <string name="privacy_s12_title">第十二条　禁止行为</string>
+    <string name="privacy_s12_body">未经权利人书面许可，<b>一律禁止</b>下列行为：\n\n<b>一、未经授权转载。</b>包括直接复制、改写洗稿、机器翻译后发布、截图或 OCR 后重新发布。\n<b>二、用于训练人工智能模型。</b>包括大语言模型或多模态模型之预训练、继续预训练、监督微调、指令微调、对齐训练或蒸馏。\n<b>三、用于构建数据集。</b>将本站内容抓取、清洗、改写、翻译或 OCR 后，收入任何以训练前述模型为目的之数据集、语料库或评测集。\n<b>四、抽取为向量并入库。</b>为前述目的生成嵌入向量并存入向量数据库。\n<b>五、规避权利声明。</b>包括伪装 User-Agent 以冒充普通浏览器、经由第三方代理或镜像站点间接抓取、通过公共语料库二次获取，以及无视 robots.txt 中的禁止性声明。\n<b>六、以他人名义转授权。</b>将自本站取得之授权范围再行转让于第三方。</string>
+
+    <string name="privacy_s13_title">第十三条　免责声明</string>
+    <string name="privacy_s13_body">本应用<b>仅为浏览工具</b>，不对第三方网站的内容真实性、安全性或合法性负责，亦不对您因使用本应用而产生的任何直接或间接损失承担责任。\n\n建议您：不要在不明来源的网站输入敏感信息；定期清除应用缓存与浏览数据；仅从可信来源获取内容。</string>
+
+    <string name="privacy_s14_title">第十四条　生效、修改与适用</string>
+    <string name="privacy_s14_body">本条款自 2026 年 10 月 1 日起生效，适用于 Lab.Nardo 应用及其所加载的纳多狐狐实验室网站内容。本条款可能因功能调整而修改，修改后将在应用内与网站同步发布。\n\n<b>版本升级提示</b>：自 3.0.0 起本应用改用新的签名密钥，已安装旧版本的用户在升级前需先卸载旧版，本地数据（偏好与缓存）会随之丢失。</string>
 </resources>

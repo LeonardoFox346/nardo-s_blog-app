@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  「AI 辅助编程」页的品牌头图渐变底。
+  DeepSeek 品牌蓝 #4D6BFE 起手，向右上过渡到紫。⛔ 固定色，不跟明暗主题走
+  （头图上的文字一律用白色，深色模式同样成立）。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="28dp" />
+    <gradient
+        android:angle="45"
+        android:startColor="#FF3F5BF5"
+        android:centerColor="#FF4D6BFE"
+        android:endColor="#FF8A5CF6" />
+</shape>

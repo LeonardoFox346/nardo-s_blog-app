@@ -3,37 +3,60 @@ package com.leonardofox346.io;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 import java.util.List;
 
-public class TabManagerActivity extends AppCompatActivity implements TabCardAdapter.OnTabActionListener {
+/**
+ * 标签页集合（MD3）：卡片网格，支持切换 / 休眠 / 关闭。
+ *
+ * <p>休眠与唤醒不再自己抄一份 WebView 代码，统一调 {@link TabUtils}
+ * （原实现在这里用的是 {@code Lab.Nardo/2.2} 的 UA，且漏了下载拦截对话框）。</p>
+ */
+@SuppressLint("NotifyDataSetChanged") // 标签数量少且状态整体变化，全量刷新比 DiffUtil 更直观
+public class TabManagerActivity extends AppCompatActivity
+        implements TabCardAdapter.OnTabActionListener {
 
-    private RecyclerView recyclerView;
     private TabCardAdapter adapter;
     private List<Tab> tabs;
     private int currentTabIndex;
 
+    private final TabUtils.OnPageLoadedListener pageLoadedListener = tab -> {
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_tab_manager);
+        UiInsets.applyTo(findViewById(R.id.tabManagerRoot));
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("标签页集合");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
-        recyclerView = findViewById(R.id.recyclerTabs);
+        RecyclerView recyclerView = findViewById(R.id.recyclerTabs);
 
         tabs = MainActivity.getSharedTabs();
         currentTabIndex = MainActivity.getSharedCurrentTabIndex();
+
+        // ⛔ 进程被系统回收后重建本页时，MainActivity 的 static 列表已经没了
+        // （Java 静态字段不跨进程存活），此时 tabs 为 null —— 若不拦，
+        // RecyclerView 会在 getItemCount() 里 NPE 闪退。直接收摊，让栈里
+        // 下方的 MainActivity 重新创建即可（它自己会 addNewTab(HOME_URL)）。
+        if (tabs == null || tabs.isEmpty()) {
+            finish();
+            return;
+        }
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new TabCardAdapter(tabs, currentTabIndex, this);
@@ -48,21 +71,14 @@ public class TabManagerActivity extends AppCompatActivity implements TabCardAdap
         finish();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onTabClose(int position) {
-        if (tabs.size() <= 1) {
-            Toast.makeText(this, "至少保留一个标签页", Toast.LENGTH_SHORT).show();
+        if (tabs == null || tabs.size() <= 1) {
+            Toast.makeText(this, R.string.toast_keep_one_tab, Toast.LENGTH_SHORT).show();
             return;
         }
         if (position >= 0 && position < tabs.size()) {
-            Tab tab = tabs.get(position);
-            if (tab.getWebView() != null) {
-                tab.getWebView().stopLoading();
-                tab.getWebView().loadUrl("about:blank");
-                tab.getWebView().clearHistory();
-                tab.getWebView().destroy();
-            }
+            TabUtils.destroyWebView(tabs.get(position));
             tabs.remove(position);
             if (currentTabIndex >= tabs.size()) {
                 currentTabIndex = tabs.size() - 1;
@@ -79,64 +95,19 @@ public class TabManagerActivity extends AppCompatActivity implements TabCardAdap
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onTabSleep(int position) {
-        if (position >= 0 && position < tabs.size()) {
-            Tab tab = tabs.get(position);
-            if (tab.isHibernated()) {
-                wakeUpTab(tab);
-                Toast.makeText(this, "已唤醒标签页", Toast.LENGTH_SHORT).show();
-            } else {
-                hibernateTab(tab);
-                Toast.makeText(this, "标签页已休眠", Toast.LENGTH_SHORT).show();
-            }
-            adapter.notifyDataSetChanged();
+        if (tabs == null || position < 0 || position >= tabs.size()) {
+            return;
         }
-    }
-
-    private void hibernateTab(Tab tab) {
-        if (tab.getWebView() != null) {
-            tab.setUrl(tab.getWebView().getUrl());
-            tab.setTitle(tab.getWebView().getTitle());
-            tab.getWebView().stopLoading();
-            tab.getWebView().loadUrl("about:blank");
-            tab.getWebView().clearHistory();
-            if (tab.getWebView().getParent() != null) {
-                ((ViewGroup) tab.getWebView().getParent()).removeView(tab.getWebView());
-            }
-            tab.setWebView(null);
+        Tab tab = tabs.get(position);
+        if (tab.isHibernated()) {
+            TabUtils.wakeUp(this, tab, pageLoadedListener);
+            Toast.makeText(this, R.string.toast_tab_woken, Toast.LENGTH_SHORT).show();
+        } else {
+            TabUtils.hibernate(tab);
+            Toast.makeText(this, R.string.toast_tab_hibernated, Toast.LENGTH_SHORT).show();
         }
-        tab.setHibernated(true);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void wakeUpTab(Tab tab) {
-        android.webkit.WebView webView = new android.webkit.WebView(this);
-        android.webkit.WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setCacheMode(android.webkit.WebSettings.LOAD_DEFAULT);
-        settings.setUserAgentString(settings.getUserAgentString() + " Lab.Nardo/2.2");
-
-        webView.setWebViewClient(new android.webkit.WebViewClient() {
-            @Override
-            public void onPageFinished(android.webkit.WebView view, String url) {
-                super.onPageFinished(view, url);
-                tab.setUrl(url);
-                tab.setTitle(view.getTitle());
-            }
-        });
-        webView.setWebChromeClient(new android.webkit.WebChromeClient());
-        webView.loadUrl(tab.getUrl());
-        tab.setWebView(webView);
-        tab.setHibernated(false);
-        tab.setLastAccessTime(System.currentTimeMillis());
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+        adapter.notifyDataSetChanged();
     }
 }

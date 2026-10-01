@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kimi 段能力卡的编号徽章底：深灰，呼应 Kimi 官方标识的黑底方块。
+  与 DeepSeek 段的蓝紫渐变徽章形成「两段」的视觉区分。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:angle="45"
+        android:startColor="#FF3C4043"
+        android:endColor="#FF6B7075" />
+</shape>

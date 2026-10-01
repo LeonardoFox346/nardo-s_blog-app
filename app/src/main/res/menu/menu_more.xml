@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  「更多」菜单（MD3 上下文菜单：由 MaterialToolbar 的 app:menu 承载，
+   不再使用旧的 PopupMenu + 手写 inflate）
+-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menu_home"
-        android:title="返回主页" />
+        android:icon="@drawable/ic_link"
+        android:title="@string/menu_home" />
 
     <item
         android:id="@+id/menu_music"
-        android:title="来点音乐？" />
+        android:icon="@drawable/ic_music"
+        android:title="@string/menu_music" />
 
     <item
         android:id="@+id/menu_tabs"
-        android:title="标签页集合" />
+        android:icon="@drawable/ic_tabs"
+        android:title="@string/menu_tabs" />
 
     <item
         android:id="@+id/menu_settings"
-        android:title="设置" />
+        android:icon="@drawable/ic_security"
+        android:title="@string/menu_settings" />
 
 </menu>
